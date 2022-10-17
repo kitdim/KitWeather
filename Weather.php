@@ -39,8 +39,33 @@ echo "Скорость ветра " .$data->wind->speed."км/ч"."<br>"; // TOD
 class Weather
 {
     const WEATHER_IP_KEY = ''; // добавить подключения ключа погоды
-    private $IpCity; // сделать отдельный класс определения города
-    private $ViewInfoWeather; // сделать класс или файл вывода погоды
+    private $_IpCity; // сделать отдельный класс определения города
+
+    /// Отобразить информацию о погоде
+    public function ViewWeather(){
+        $data = CreateWeather();
+
+        echo "В городе " . $data->name."<br>";
+        echo "Погода " . $data->main->temp_min. "°C"."<br>";
+        echo "Влажность " .$data->main->humidity. "%"."<br>";
+        echo "Скорость ветра " .$data->wind->speed."км/ч"."<br>";
+    }
+
+    /// Создание погоды по API
+    private function CreateWeather(){
+        // Создаём запрос
+        $ch = curl_init();
+        // Настройка запроса
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_URL, $url);
+
+        // Отправляем запрос и получаем ответ
+        $data = json_decode(curl_exec($ch));
+
+        // Закрываем запрос
+        curl_close($ch);
+        return $data;
+    }
 
 }
 
