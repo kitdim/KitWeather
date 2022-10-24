@@ -38,9 +38,6 @@ echo "Скорость ветра " .$data->wind->speed."км/ч"."<br>"; // TOD
 
 class Weather
 {
-    const WEATHER_IP_KEY = ''; // добавить подключения ключа погоды
-    private $_IpCity; // сделать отдельный класс определения города
-
     /// Отобразить информацию о погоде
     public function ViewWeather(){
         $data = CreateWeather();
@@ -55,6 +52,7 @@ class Weather
     private function CreateWeather(){
         // Создаём запрос
         $ch = curl_init();
+        $url = GetIpCity();
         // Настройка запроса
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_URL, $url);
@@ -67,6 +65,29 @@ class Weather
         return $data;
     }
 
+    /// Получить ip города
+    private function GetIpCity(){
+        $res = CreateIpCity();
+        $jsonKey = json_decode('setting.json');
+        $apiKey = $jsonKey['key'];
+        $city = $res['city'];
+        // Ссылка для отправки
+        $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=ru&units=metric&appid=" . $apiKey;
+    }
+
+    /// Создание города по Ip
+    private function CreateIpCity(){
+        $ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($ch, CURLOPT_HEADER, false);
+        $res = curl_exec($ch);
+        curl_close($ch);
+
+        $res = json_decode($res, true);
+
+        return $res;
+    }
 }
 
 
