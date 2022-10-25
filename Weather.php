@@ -73,6 +73,8 @@ class Weather
         $city = $res['city'];
         // Ссылка для отправки
         $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=ru&units=metric&appid=" . $apiKey;
+
+        return $url;
     }
 
     /// Создание города по Ip
