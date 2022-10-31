@@ -38,57 +38,67 @@ echo "Скорость ветра " .$data->wind->speed."км/ч"."<br>"; // TOD
 
 class Weather
 {
-    /// Отобразить информацию о погоде
-    public function ViewWeather(){
-        $data = CreateWeather();
+    private $data;
+    private $ch;
+    private $url;
+    private $res;
 
-        echo "В городе " . $data->name."<br>";
-        echo "Погода " . $data->main->temp_min. "°C"."<br>";
-        echo "Влажность " .$data->main->humidity. "%"."<br>";
-        echo "Скорость ветра " .$data->wind->speed."км/ч"."<br>";
+    public function __construct()
+    {
+        $this->res = $this->CreateIpCity();
+        $this->url = $this->GetIpCity();
+        $this->data = $this->CreateWeather();
+    }
+
+    /// Отобразить информацию о погоде
+    public function ViewWeather()
+    {
+        echo "В городе " .$this->data->name."<br>";
+        echo "Погода " .$this->data->main->temp_min. "°C"."<br>";
+        echo "Влажность " .$this->data->main->humidity. "%"."<br>";
+        echo "Скорость ветра " .$this->data->wind->speed."км/ч"."<br>";
     }
 
     /// Создание погоды по API
     private function CreateWeather(){
         // Создаём запрос
-        $ch = curl_init();
-        $url = GetIpCity();
+        $this->ch = curl_init();
         // Настройка запроса
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->ch, CURLOPT_URL, $this->url);
 
         // Отправляем запрос и получаем ответ
-        $data = json_decode(curl_exec($ch));
+        $this->data = json_decode(curl_exec($this->ch));
 
         // Закрываем запрос
-        curl_close($ch);
-        return $data;
+        curl_close($this->ch);
+
+        return $this->data;
     }
 
     /// Получить ip города
     private function GetIpCity(){
-        $res = CreateIpCity();
-        $jsonKey = json_decode('setting.json');
-        $apiKey = $jsonKey['key'];
-        $city = $res['city'];
+        $this->jsonKey = json_decode('setting.json');
+        $this->apiKey = $this->jsonKey['key'];
+        $this->city = $this->res['city'];
         // Ссылка для отправки
-        $url = "http://api.openweathermap.org/data/2.5/weather?q=" . $city . "&lang=ru&units=metric&appid=" . $apiKey;
+        $this->url = "http://api.openweathermap.org/data/2.5/weather?q=" . $this->city . "&lang=ru&units=metric&appid=" . $this->apiKey;
 
-        return $url;
+        return $this->url;
     }
 
     /// Создание города по Ip
     private function CreateIpCity(){
-        $ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($ch, CURLOPT_HEADER, false);
-        $res = curl_exec($ch);
-        curl_close($ch);
+        $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
+        curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($this->ch, CURLOPT_HEADER, false);
+        $this->res = curl_exec($this->ch);
+        curl_close($this->ch);
 
-        $res = json_decode($res, true);
+        $this->res = json_decode($this->res, true);
 
-        return $res;
+        return $this->res;
     }
 }
 
