@@ -41,7 +41,12 @@ class Weather
 
     /// Получить ip города
     private function GetIpCity(){
-        $this->jsonKey = json_decode('setting.json');
+        try {
+            $this->jsonKey = json_decode('setting.json');
+        }
+        catch (Exception $e){
+            echo "Не удалось получить ipiKey";
+        }
         $this->apiKey = $this->jsonKey['key'];
         $this->city = $this->res['city'];
         // Ссылка для отправки
@@ -52,7 +57,13 @@ class Weather
 
     /// Создание города по Ip
     private function CreateIpCity(){
-        $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
+        try {
+            $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
+        }
+        catch (Exception $e){
+            echo "Не удалось обратиться к сервису для получения ip города";
+        }
+
         curl_setopt($this->ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($this->ch, CURLOPT_SSL_VERIFYPEER, false);
         curl_setopt($this->ch, CURLOPT_HEADER, false);
