@@ -5,6 +5,9 @@ class Weather
     private $ch;
     private $url;
     private $res;
+    private $jsonKey;
+    private $apiKey;
+    private $city;
 
     public function __construct()
     {
@@ -44,7 +47,7 @@ class Weather
         try {
             $this->jsonKey = json_decode('setting.json');
         }
-        catch (Exception $e){
+        catch (Exception){
             echo "Не удалось получить ipiKey";
         }
         $this->apiKey = $this->jsonKey['key'];
@@ -58,9 +61,9 @@ class Weather
     /// Создание города по Ip
     private function CreateIpCity(){
         try {
-            $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
+            $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDR'] . '?lang=eng');
         }
-        catch (Exception $e){
+        catch (Exception){
             echo "Не удалось обратиться к сервису для получения ip города";
         }
 
@@ -75,7 +78,3 @@ class Weather
         return $this->res;
     }
 }
-
-
-
-
