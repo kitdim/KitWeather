@@ -61,7 +61,8 @@ class Weather
     /// Создание города по Ip
     private function CreateIpCity(){
         try {
-            $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDR'] . '?lang=eng');
+            error_reporting(E_ERROR);
+            $this->ch = curl_init('http://ip-api.com/json/' . $_SERVER['REMOTE_ADDER'] . '?lang=eng');
         }
         catch (Exception){
             echo "Не удалось обратиться к сервису для получения ip города";
